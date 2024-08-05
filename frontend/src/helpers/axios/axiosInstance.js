@@ -7,9 +7,13 @@ instance.defaults.headers.post['Accept'] = 'application/json';
 instance.defaults.timeout = 60000;
 
 instance.interceptors.request.use(function (config) {
-    const accessToken = getFromLocalStorage('accessToken');
-    if (accessToken) {
-        config.headers.Authorization = accessToken;
+    const userData = getFromLocalStorage('userData');
+    const parseuserData = JSON.parse(userData);
+    //console.log("userdata Access Token",JSON.parse(userData));
+    //console.log("userdata Access Token 234",JSON.parse(userData)?.accessToken);
+  //  accessTokens = userData?.accessToken;
+    if (parseuserData) {
+        config.headers.Authorization = parseuserData?.accessToken;
     }
     return config;
 }, function (error) {
@@ -17,6 +21,7 @@ instance.interceptors.request.use(function (config) {
 });
 
 instance.interceptors.response.use(function (response) {
+    //console.log("axiosInstance Response",response);
     const responseObj = {
         data: response?.data?.data,
         meta: response?.data?.meta

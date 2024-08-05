@@ -63,9 +63,21 @@ const getPatientCounts = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const getPatientCountsById = catchAsync(async (req: Request, res: Response) => {
+  
+    const result = await PatientService.getPatientCountById(req.body.LastLoginId);
+    sendResponse(res, {
+        statusCode: 200,
+        message: 'Successfully Get Patient Count by Doctor Id !!',
+        success: true,
+        data: result
+    })
+})
+
 export const PatientController = {
     createPatient,
     getPatientCounts,
+    getPatientCountsById,
     updatePatient,
     getPatient,
     getAllPatients,

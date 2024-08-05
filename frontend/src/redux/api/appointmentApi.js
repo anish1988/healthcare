@@ -5,6 +5,28 @@ const APPOINTMENT_URL = '/appointment'
 
 export const appointmentApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
+        getAllAppointments: build.query({
+            query: (arg) => {
+                console.log("Query:", {
+                    url: `${APPOINTMENT_URL}`,
+                    method: 'GET',
+                    params: arg
+                });// Check the value of arg in the console
+                return {
+                    url: `${APPOINTMENT_URL}`,
+                method: 'GET',
+                params: arg
+                };
+            },
+            transformResponse: (response) =>{
+                console.log("transformResponse",response);
+                return {
+                    appointments: response,
+                    //meta: response.meta
+                }
+            },
+            providesTags: [tagTypes.appointments]
+        }),
         createAppointment: build.mutation({
             query: (data) => ({
                 url: `${APPOINTMENT_URL}/create`,
@@ -58,18 +80,39 @@ export const appointmentApi = baseApi.injectEndpoints({
             providesTags: [tagTypes.appointments]
         }),
         getDoctorAppointments: build.query({
-            query: (arg) => ({
+           /* query: (arg) => ({
                 url: `${APPOINTMENT_URL}/doctor/appointments`,
                 method: 'GET',
                 params: arg
-            }),
+            }),*/
+            query: (data) => {
+                console.log("Query:", {
+                    url: `${APPOINTMENT_URL}/doctor/appointments`,
+                    method: 'POST',
+                    data: data
+                });// Check the value of arg in the console
+                return {
+                    url: `${APPOINTMENT_URL}/doctor/appointments`,
+                    method: 'POST',
+                    data: data
+                };
+            },
             providesTags: [tagTypes.appointments]
         }),
         getDoctorPatients: build.query({
-            query: () => ({
-                url: `${APPOINTMENT_URL}/doctor/patients`,
-                method: 'GET'
-            }),
+            query: (data) => {
+                console.log("Query:", {
+                    url: `${APPOINTMENT_URL}/doctor/patients`,
+                    method: 'POST',
+                    data: data
+                });// Check the value of arg in the console
+               
+                return {
+                    url: `${APPOINTMENT_URL}/doctor/patients`,
+                    method: 'POST',
+                    data: data
+                };
+            },
             providesTags: [tagTypes.appointments]
         }),
         getPatientInvoices: build.query({
@@ -82,6 +125,13 @@ export const appointmentApi = baseApi.injectEndpoints({
         getDoctorInvoices: build.query({
             query: () => ({
                 url: `${APPOINTMENT_URL}/doctor/invoices`,
+                method: 'GET'
+            }),
+            providesTags: [tagTypes.appointments]
+        }),
+        getAppointmentCounts: build.query({
+            query: () => ({
+                url: `${APPOINTMENT_URL}/getAppointmentCounts`,
                 method: 'GET'
             }),
             providesTags: [tagTypes.appointments]
@@ -99,6 +149,8 @@ export const {
     useGetPatientInvoicesQuery,
     useGetDoctorInvoicesQuery,
     useUpdateAppointmentMutation,
+    useGetAppointmentCountsQuery,
+    useGetAllAppointmentsQuery,
     useCreateAppointmentByUnauthenticateUserMutation, 
     useTrackAppointmentMutation
 } = appointmentApi;

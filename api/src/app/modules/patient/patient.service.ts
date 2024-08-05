@@ -1,4 +1,4 @@
-import { Patient, UserRole } from "@prisma/client";
+import { Patient, Appointments,UserRole } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { create } from "./patientService";
 import { IUpload } from "../../../interfaces/file";
@@ -67,9 +67,21 @@ const getPatientCount = async (): Promise<any> => {
     return result;
 }
 
+const getPatientCountById = async (user: any): Promise<Appointments | null | any> => {
+    const drId = user;
+    const result = await prisma.appointments.count({
+        where : {
+            doctorId :drId
+        }
+    });
+    console.log("getPatientCount",result);
+    return result;
+}
+
 export const PatientService = {
     createPatient,
     getPatientCount,
+    getPatientCountById,
     updatePatient,
     getPatient,
     getAllPatients,

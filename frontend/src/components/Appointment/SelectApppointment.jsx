@@ -10,8 +10,8 @@ const SelectApppointment = ({ selectedDate, handleDateChange, selectTime, setSel
     const amTimeSlot = doctorTimeSlot.filter((item) => item.includes('AM'));
     const pmTimeSlot = doctorTimeSlot.filter((item) => item.includes('PM'));
 
-    const last5Days = Array.from({ length: 5 }, (_, index) =>
-        moment().clone().subtract(index, 'days')
+    const last5Days = Array.from({ length: 7 }, (_, index) =>
+        moment().clone().add(index, 'days')
     )
 
     return (
@@ -52,7 +52,7 @@ const SelectApppointment = ({ selectedDate, handleDateChange, selectTime, setSel
                         <div className='info-date-card row'>
                             {
                                 last5Days.map((item, index) => (
-                                    <div key={index + 5} className="mb-3 col-md-6" onClick={() => handleDateChange(item)}>
+                                    <div key={index + 10} className="mb-3 col-md-6" onClick={() => handleDateChange(item)}>
                                         <div className={`p-3 mb-3 rounded text-center select-date ${moment(item).format('LL') === moment(selectedDate).format('LL') ? 'active' : ''}`}>
                                             <div className='select-month'>{moment(item).format('MMMM YYYY')}</div>
                                             <div className='select-day-num'>{moment(item).format('D')}</div>

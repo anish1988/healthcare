@@ -354,17 +354,17 @@ const updateAppointment = async (id: string, payload: Partial<Appointments>): Pr
 
 //doctor Side
 const getDoctorAppointmentsById = async (user: any, filter: any): Promise<Appointments[] | null> => {
-    const { userId } = user;
+  console.log("Fileter",filter);
     const isDoctor = await prisma.doctor.findUnique({
         where: {
-            id: userId
+            id: user
         }
     })
     if (!isDoctor) { throw new ApiError(httpStatus.NOT_FOUND, 'Doctor Account is not found !!') }
 
-    let andCondition: any = { doctorId: userId };
+    let andCondition: any = { doctorId: user };
 
-    if (filter.sortBy == 'today') {
+    if (filter == 'today') {
         const today = moment().startOf('day').format('YYYY-MM-DD HH:mm:ss');
         const tomorrow = moment(today).add(1, 'days').format('YYYY-MM-DD HH:mm:ss');
 
@@ -373,10 +373,16 @@ const getDoctorAppointmentsById = async (user: any, filter: any): Promise<Appoin
             lt: tomorrow
         }
     }
-    if (filter.sortBy == 'upcoming') {
+    if (filter == 'upcoming') {
         const upcomingDate = moment().startOf('day').add(1, 'days').format('YYYY-MM-DD HH:mm:ss')
         andCondition.scheduleDate = {
             gte: upcomingDate
+        }
+    }
+    if (filter === 'previous') {
+        const previoudsDate = moment().startOf('day').subtract(1, 'days').format('YYYY-MM-DD HH:mm:ss')
+        andCondition.scheduleDate = {
+            lte: previoudsDate
         }
     }
     const whereConditions = andCondition ? andCondition : {}
@@ -396,10 +402,11 @@ const getDoctorAppointmentsById = async (user: any, filter: any): Promise<Appoin
 }
 
 const getDoctorPatients = async (user: any): Promise<Patient[]> => {
-    const { userId } = user;
+   // const { userId } = user;
+   const drId = user;
     const isDoctor = await prisma.doctor.findUnique({
         where: {
-            id: userId
+            id: drId
         }
     })
     if (!isDoctor) {
@@ -408,7 +415,7 @@ const getDoctorPatients = async (user: any): Promise<Patient[]> => {
 
     const patients = await prisma.appointments.findMany({
         where: {
-            doctorId: userId
+            doctorId: drId
         },
         distinct: ['patientId']
     });

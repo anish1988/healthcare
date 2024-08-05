@@ -1,4 +1,4 @@
-import {authKey} from '../constant/storageKey';
+import {userData, authKey} from '../constant/storageKey';
 import {decodeToken} from '../utils/jwt';
 import { getFromLocalStorage, setLocalStorage } from '../utils/local-storage';
 export const setUserInfo = ({ accessToken }) => {
@@ -6,18 +6,21 @@ export const setUserInfo = ({ accessToken }) => {
 }
 
 export const getUserInfo = () => {
-    const authToken = getFromLocalStorage(authKey);
-    if (authToken) {
-        const decodedToken = decodeToken(authToken);
+    const authToken = getFromLocalStorage(userData);
+   // console.log("Auth Token Data",JSON.parse(authToken));
+    const parseuserDatas = JSON.parse(authToken);
+   // console.log("Auth Token Data authToken",parseuserDatas?.accessToken);
+    if (parseuserDatas) {
+        const decodedToken = decodeToken(parseuserDatas?.accessToken);
         return decodedToken
     } else {
         return null
     }
 }
 export const isLoggedIn = () => {
-    const authToken = getFromLocalStorage(authKey);
+    const authToken = getFromLocalStorage(userData);
     return !!authToken;
 }
 export const loggedOut = () => {
-    return localStorage.removeItem(authKey)
+    return localStorage.removeItem(userData)
 }

@@ -7,15 +7,22 @@ import { Button, Tag, message } from 'antd';
 import CustomTable from '../../../UI/component/CustomTable';
 import { Tabs } from 'antd';
 import { Link } from 'react-router-dom';
+import { getFromLocalStorage } from '../../../../utils/local-storage';
+import {userData} from '../../../../constant/storageKey';
 
 const DashboardPage = () => {
     const [sortBy, setSortBy] = useState("upcoming");
-    const { data, refetch, isLoading } = useGetDoctorAppointmentsQuery({ sortBy });
+    const authToken = getFromLocalStorage(userData);
+    //console.log("parseUserDatas userData authToken ",JSON.parse(authToken));
+    const parseUserDatas = JSON.parse(authToken);
+    console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id,sortBy);
+    
+    const { data, refetch, isLoading } = useGetDoctorAppointmentsQuery({ sortBy ,LastLoginId: parseUserDatas?.Last_Login_Id });
     const [updateAppointment, { isError, isSuccess, error }] = useUpdateAppointmentMutation();
 
     const handleOnselect = (value) => {
         // eslint-disable-next-line eqeqeq
-        setSortBy(value == 1 ? 'upcoming' : value == 2 ? 'today' : sortBy)
+        setSortBy(value == 1 ? 'upcoming' : value == 2 ? 'today' : value == 3 ? 'previous' : sortBy)
         refetch()
     }
 
@@ -117,7 +124,7 @@ const DashboardPage = () => {
     const items = [
         {
             key: '1',
-            label: 'upcoming',
+            label: 'Upcoming',
             children: <CustomTable
                 loading={isLoading}
                 columns={upcomingColumns}
@@ -129,7 +136,19 @@ const DashboardPage = () => {
         },
         {
             key: '2',
-            label: 'today',
+            label: 'Today',
+            children: <CustomTable
+                loading={isLoading}
+                columns={upcomingColumns}
+                dataSource={data}
+                showPagination={true}
+                pageSize={10}
+                showSizeChanger={true}
+            />,
+        },
+        {
+            key: '3',
+            label: 'Previous',
             children: <CustomTable
                 loading={isLoading}
                 columns={upcomingColumns}

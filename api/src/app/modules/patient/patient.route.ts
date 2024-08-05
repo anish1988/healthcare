@@ -11,6 +11,7 @@ router.post('/', PatientController.createPatient);
 router.get('/:id', PatientController.getPatient);
 router.delete('/:id', PatientController.deletePatient);
 router.get('/getPatientCounts',PatientController.getPatientCounts);
+router.post('/getPatientCountsByID',PatientController.getPatientCountsById);
 router.patch('/:id',
     CloudinaryHelper.upload.single('file'),
     auth(AuthUser.PATIENT),
