@@ -14,7 +14,14 @@ export const authApi = baseApi.injectEndpoints({
             async onQueryStarted(arg, { queryFulfilled, dispatch }) {
                 try {
                     const result = (await queryFulfilled).data;
-                    setUserInfo({ accessToken: result.accessToken });
+                    const userData = {
+                        accessToken: result.accessToken,
+                        Last_Login_Id: result.user?.userId,
+                        Last_Login_role: result.user?.role,    // For demonstration purposes only, do not store passwords like this
+                      };
+                   // console.log("userInfo id",result.user?.userId);
+                    setUserInfo({ userData: userData });
+                    
                 } catch (error) {
                 }
             },

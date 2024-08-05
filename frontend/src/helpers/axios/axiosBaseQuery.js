@@ -3,7 +3,7 @@ import { instance } from './axiosInstance';
 export const axiosBaseQuery =
     ({ baseUrl } = { baseUrl: '' }) =>
         async ({ url, method, data, params, headers }) => {
-            console.log("baseurl", baseUrl, "UEl ",url);
+            
             try {
                 const result = await instance({
                     url: baseUrl + url,

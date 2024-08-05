@@ -99,7 +99,7 @@ const getDoctorAppointmentsById = catchAsync(async (req: Request, res: Response)
         //req.query.doctorId = '398b61d4-8139-42cb-8f92-9a199787b8c9';
         
         console.log("Hey Name is: ",req.body);
-        const result = await AppointmentService.getDoctorAppointmentsById(req.body.LastLoginId, req.query);
+        const result = await AppointmentService.getDoctorAppointmentsById(req.body.LastLoginId, req.body.sortBy);
         sendResponse(res, {
             statusCode: 200,
             message: 'Successfully Retrieve doctor apppointments !!',
@@ -128,7 +128,8 @@ const updateAppointmentByDoctor = catchAsync(async (req: Request, res: Response)
 })
 
 const getDoctorPatients = catchAsync(async (req: Request, res: Response) => {
-    const result = await AppointmentService.getDoctorPatients(req.user);
+    console.log("getDoctorPatients",req.body.LastLoginId);
+    const result = await AppointmentService.getDoctorPatients(req.body.LastLoginId);
     sendResponse<Patient[]>(res, {
         statusCode: 200,
         message: 'Successfully retrieve doctor patients !!',

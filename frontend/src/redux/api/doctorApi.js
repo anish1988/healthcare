@@ -6,11 +6,23 @@ const DOC_URL = '/doctor'
 export const doctorApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         getDoctors: build.query({
-            query: (arg) => ({
+            /*query: (arg) => ({
                 url: `${DOC_URL}`,
                 method: 'GET',
                 params: arg
-            }),
+            }),*/
+            query: (arg) => {
+                console.log("Query:", {
+                    url: `${DOC_URL}`,
+                    method: 'GET',
+                    params: arg
+                });// Check the value of arg in the console
+                return {
+                    url: `${DOC_URL}`,
+                method: 'GET',
+                params: arg
+                };
+            },
             transformResponse: (response) =>{
                 return {
                     doctors: response.data,
@@ -36,8 +48,15 @@ export const doctorApi = baseApi.injectEndpoints({
                 },
             }),
             invalidatesTags: [tagTypes.doctor]
-        })
+        }),
+        getDoctorCounts: build.query({
+            query: () => ({
+                url: `${DOC_URL}/getDoctorCount`,
+                method: 'GET',
+            }),
+            providesTags: [tagTypes.doctor]
+        }),
     })
 })
 
-export const { useGetDoctorsQuery, useGetDoctorQuery, useUpdateDoctorMutation } = doctorApi
+export const { useGetDoctorsQuery, useGetDoctorQuery, useUpdateDoctorMutation ,useGetDoctorCountsQuery} = doctorApi

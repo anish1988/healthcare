@@ -6,13 +6,19 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { FaClock, FaEnvelope, FaLocationArrow, FaPhoneAlt } from "react-icons/fa";
 import { Empty } from 'antd';
+import { getFromLocalStorage } from '../../../utils/local-storage';
+import {userData} from '../../../constant/storageKey';
 
 const MyPatients = () => {
+    const authToken = getFromLocalStorage(userData);
+    const parseUserDatas = JSON.parse(authToken);
+    const paramData = {  LastLoginId: parseUserDatas?.Last_Login_Id }
     const getInitPatientName = (item) => {
         const fullName = `${item?.firstName ?? ''} ${item?.lastName ?? ''}`;
         return fullName.trim() || "Private Patient";
     }
-    const { data, isLoading, isError } = useGetDoctorPatientsQuery();
+    const { data, isLoading, isError } = useGetDoctorPatientsQuery(paramData);
+    console.log("useGetDoctorPatientsQuery", data);
     let content = null;
     if (!isLoading && isError) content = <div>Something Went Wrong !</div>
     if (!isLoading && !isError && data?.length === 0) content = <Empty/>

@@ -7,12 +7,25 @@ import { useGetDoctorAppointmentsQuery, useUpdateAppointmentMutation } from '../
 import moment from 'moment';
 import { Button, Empty, message, Tag, Tooltip } from 'antd';
 import { FaEye, FaCheck, FaTimes } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link ,useParams} from 'react-router-dom';
 import { FaClock, FaEnvelope, FaLocationArrow, FaPhoneAlt, FaBriefcaseMedical } from "react-icons/fa";
 import { clickToCopyClipBoard } from '../../../utils/copyClipBoard';
+import { getFromLocalStorage } from '../../../utils/local-storage';
+import {userData } from '../../../constant/storageKey';
 
 const Appointments = () => {
-    const { data, isError, isLoading } = useGetDoctorAppointmentsQuery({});
+    const { id } = useParams();
+    const authToken = getFromLocalStorage(userData);
+    //console.log("parseUserDatas userData authToken ",JSON.parse(authToken));
+    const parseUserDatas = JSON.parse(authToken);
+    console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id);
+    const doctorData = { LastLoginId: parseUserDatas?.Last_Login_Id }
+    
+    //const { data, isError, isLoading } = useGetDoctorAppointmentsQuery(parseUserDatas?.Last_Login_Id);
+    const  { data, isLoading, isError } = useGetDoctorAppointmentsQuery( doctorData );
+    //const 
+
+    console.log("UseGetDoctorAppointmentsQuery", data);
     const [updateAppointment, { isError: updateIsError, isSuccess, error }] = useUpdateAppointmentMutation();
 
     const updatedApppointmentStatus = (id, type) => {
@@ -31,10 +44,11 @@ const Appointments = () => {
         if (isError) {
             message.error(error?.data?.message);
         }
-    }, [isSuccess, updateIsError, error])
+    }, [isSuccess, updateIsError, error,doctorData])
 
-    const getInitPatientName = () => {
-        const fullName = `${data?.patient?.firstName ?? ''} ${data?.patient?.lastName ?? ''}`;
+    const getInitPatientName = (item) => {
+        console.log("FiesrName", item?.patient?.firstName);
+        const fullName = `${item?.patient?.firstName ?? ''} ${item?.patient?.lastName ?? ''}`;
         return fullName.trim() || "Private Patient";
     }
 
@@ -52,7 +66,7 @@ const Appointments = () => {
                                     <img src={data?.patient?.img ? data?.patient?.img : img} alt="" />
                                 </Link>
                                 <div className="patients-info">
-                                    <h5>{getInitPatientName()}</h5>
+                                    <h5>{getInitPatientName(item)}</h5>
                                     <Tooltip title="Copy Tracking Id">
                                         <Button>
                                             <h6>Tracking<Tag color="#87d068" className='ms-2 text-uppercase' onClick={() => clickToCopyClipBoard(item?.trackingId)}>{item?.trackingId}</Tag></h6>

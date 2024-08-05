@@ -1,24 +1,42 @@
 import './index.css';
+import React, { useEffect, useState } from 'react'
 import { FaHospitalUser, FaCalendarAlt, FaHospital } from "react-icons/fa";
+import { getFromLocalStorage } from '../../../../utils/local-storage';
+import {userData} from '../../../../constant/storageKey';
+import { useGetPatientCountsByIdQuery } from '../../../../redux/api/patientApi';
+import moment from "moment";
+
 const DoctorDashCard = () => {
+
+    
+    const myDate = new Date()
+    const date = moment(myDate).format('DD-MMM-YYYY');
+
+    const authToken = getFromLocalStorage(userData);
+    const parseUserDatas = JSON.parse(authToken);
+    const [patientsCount, setPatientsCount] = useState(0);
+    const paramData = {  LastLoginId: parseUserDatas?.Last_Login_Id }
+    const { data:patientsDataCount } = useGetPatientCountsByIdQuery(paramData);
+   
+
     const cardData = [
         {
             icon: <FaHospital className='icon' />,
             title: 'Total Patient',
-            amount: 1500,
-            date: "10 Jan 2024"
+            amount: `${patientsDataCount}`,
+            date: `${date}`
         },
         {
             icon: <FaHospitalUser className='icon active' />,
             title: 'Today Patient',
             amount: 1500,
-            date: "10 Jan 2024"
+            date: `${date}`
         },
         {
             icon: <FaCalendarAlt className='icon danger' />,
             title: 'Appointments',
-            amount: 85,
-            date: "10 Jan 2024"
+            amount: `${patientsDataCount}`,
+            date: `${date}`
         }
     ]
     return (
