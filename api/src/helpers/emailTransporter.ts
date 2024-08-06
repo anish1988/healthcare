@@ -22,7 +22,6 @@ export const EmailtTransporter = async({pathName,replacementObj, toMail, subject
         subject: subject,
         html: htmlToSend
     };
-
     try {
         await Transporter.sendMail(mailOptions);
     } catch (error) {
