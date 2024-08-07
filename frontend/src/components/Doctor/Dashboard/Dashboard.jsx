@@ -7,6 +7,7 @@ import PatientDashboard from './PatientDashboard';
 
 const Dashboard = () => {
     const { role } = useAuthCheck();
+    console.log("Dashboard role", role);
     return (
         <>
             <DashboardLayout>

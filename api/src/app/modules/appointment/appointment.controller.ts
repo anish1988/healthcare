@@ -17,9 +17,11 @@ const createAppointment = catchAsync(async (req: Request, res: Response) => {
 const createAppointmentByUnAuthenticateUser = catchAsync(async (req: Request, res: Response) => {
     console.log("createAppointmentByUnAuthenticateUser",req.body.patientInfo);
     const PatientsInfo = req.body.patientInfo;
+    const patResult = '';
    // const isUserExist = checkPatientsExits(PatientsInfo);
 
-    const result = await AppointmentService.checkPatientsExits(PatientsInfo.patientId);
+    const result = await AppointmentService.checkPatientsExits(PatientsInfo);
+    console.log("Result",result);
     if (!result) {
         const createPatientsInfo:any = {};
         createPatientsInfo.firstName = PatientsInfo.firstName;  
@@ -44,6 +46,17 @@ const createAppointmentByUnAuthenticateUser = catchAsync(async (req: Request, re
             data: result
         })
         
+    }else {
+        const getPatientsId = await AppointmentService.getPatientsId(PatientsInfo.email);
+        req.body.patientInfo.patientId = getPatientsId.id;
+        console.log("Final reqBody",req.body);
+        const result = await AppointmentService.createAppointmentByUnAuthenticateUser(req.body);
+        sendResponse(res, {
+            statusCode: 200,
+            message: 'Successfully Appointment Created !!',
+            success: true,
+            data: result
+        })
     }
    
    /* process.exit(1);
@@ -212,7 +225,7 @@ const getAppointmentCounts = catchAsync(async (req: Request, res: Response) => {
  * @returns {Promise<string | undefined>} - A promise that resolves with the patient ID if the patient does not exist, or undefined if the patient does exist.
  */
 const checkPatientsExits = async (patientInfo: any): Promise<string | undefined> => {
-    const result = await AppointmentService.checkPatientsExits(patientInfo.patientId);
+    const result = await AppointmentService.checkPatientsExits(patientInfo);
     if (!result) {
         delete patientInfo.scheduleDate;
         delete patientInfo.patientId;

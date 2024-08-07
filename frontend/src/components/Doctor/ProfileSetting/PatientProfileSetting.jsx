@@ -22,6 +22,7 @@ const PatientProfileSetting = () => {
     const [file, setFile] = useState(null);
 
     const onChange = (date, dateString) => { 
+        console.log("DateFormdateStringate" , dateString);
         setDate(moment(dateString).format());
     };
 
@@ -47,16 +48,19 @@ const PatientProfileSetting = () => {
             setSelectBloodGroup(e.target.value);
         }
     }
-
+console.log("DateFormate" , date);
     const onSubmit = (data) => {
         const obj = data;
         const newObj = { ...obj, ...selectValue };
         date && (newObj['dateOfBirth'] = date);
+        console.log("newObj data",newObj);
         const changedValue = Object.fromEntries(Object.entries(newObj).filter(([key, value]) => value !== ''));
         const formData = new FormData();
         selectedImage && formData.append('file', file);
         const changeData = JSON.stringify(changedValue);
         formData.append('data', changeData)
+    //   /  formData.append('dateOfBirth', date)
+        console.log("formData",formData);
         updatePatient({ data: formData, id: userId })
     };
 

@@ -9,12 +9,25 @@ import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { FaRegEye } from "react-icons/fa";
 import { clickToCopyClipBoard } from '../../../utils/copyClipBoard';
+import { getFromLocalStorage } from '../../../utils/local-storage';
+import { useState } from 'react';
+import { userData } from '../../../constant/storageKey';
+
 
 const PatientDashboard = () => {
     const { data, isLoading: pIsLoading } = useGetPatientAppointmentsQuery();
     const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery();
     const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery();
-    
+    const [sortBy, setSortBy] = useState("Appointment");
+    const authToken = getFromLocalStorage(userData);
+    const parseUserDatas = JSON.parse(authToken);
+    console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id,sortBy);
+    const handleOnselect = (value) => {
+        // eslint-disable-next-line eqeqeq
+        setSortBy(value == 1 ? 'Appointment' : value == 2 ? 'Prescription' : value == 3 ? 'Billing' : sortBy)
+        //refetch()
+    }
+
     const InvoiceColumns = [
         {
             title: 'Doctor',
@@ -256,7 +269,7 @@ const PatientDashboard = () => {
         },
     ];
     return (
-        <Tabs defaultActiveKey="1" items={items} />
+        <Tabs defaultActiveKey="1" items={items} onChange={handleOnselect}/>
     )
 }
 export default PatientDashboard;

@@ -45,6 +45,7 @@ const deletePatient = catchAsync(async (req: Request, res: Response) => {
 })
 
 const updatePatient = catchAsync(async (req: Request, res: Response) => {
+    console.log("updatePatient",req.body);
     const result = await PatientService.updatePatient(req);
     sendResponse<Patient>(res, {
         statusCode: 200,
