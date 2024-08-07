@@ -12,31 +12,44 @@ import { clickToCopyClipBoard } from '../../../utils/copyClipBoard';
 import { getFromLocalStorage } from '../../../utils/local-storage';
 import { useState } from 'react';
 import { userData } from '../../../constant/storageKey';
+import PatientsInvoice from './doctor/PatientsInvoice';
+import PatientsPrescription from './doctor/PatientsPrescription';
+import PatientsAppointments from './doctor/PatientsAppointments';
 
 
 const PatientDashboard = () => {
-    const [sortBy, setSortBy] = useState("Appointment");
+    
+   
+    const [activeKey, setActiveKey] = useState("1");
+    const [refresh, setRefresh] = useState(false);
     const authToken = getFromLocalStorage(userData);
     const parseUserDatas = JSON.parse(authToken);
-    console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id,sortBy);
-    const paramData = {LastLoginId: parseUserDatas?.Last_Login_Id}
-    const { data ,isLoading: pIsLoading } = useGetPatientAppointmentsQuery(paramData);
-    const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery(paramData);
-    const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery(paramData);
-    if(sortBy == 'Appointment'){
-        const { data ,isLoading: pIsLoading } = useGetPatientAppointmentsQuery(paramData);
-    }else   if(sortBy == 'Prescription'){
-        const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery(paramData);
-    }else {
-        const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery(paramData);
+    console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id);
+    const paramData = {LastLoginId: parseUserDatas?.Last_Login_Id} 
+//     const { data ,isLoading: pIsLoading } = useGetPatientAppointmentsQuery(paramData);
+    const { data, isLoading: pIsLoading ,refetch: refetchAppointments} = useGetPatientAppointmentsQuery(paramData);
+    const { data: prescriptionData, prescriptionIsLoading ,refetch: refetchPrescriptions} = useGetPatientPrescriptionQuery(paramData);
+    const { data: invoices, isLoading: InvoicesIsLoading ,refetch: refetchBilling} = useGetPatientInvoicesQuery(paramData);
+  
+    const handleOnselect = (key) => {
+        setActiveKey(key);
+        switch (key) {
+            case '1':
+              refetchAppointments();
+              break;
+            case '2':
+              refetchPrescriptions();
+              break;
+            case '3':
+              refetchBilling();
+              break;
+            default:
+              break;
+          }
 
-    }
-    const handleOnselect = (value) => {
-        // eslint-disable-next-line eqeqeq
-        setSortBy(value == 1 ? 'Appointment' : value == 2 ? 'Prescription' : value == 3 ? 'Billing' : sortBy)
-        
-    }
-    const InvoiceColumns = [
+      };
+
+      const InvoiceColumns = [
         {
             title: 'Doctor',
             key: 1,
@@ -276,8 +289,27 @@ const PatientDashboard = () => {
             />
         },
     ];
+  
+  /*  const items = [
+        {
+            key: '1',
+            label: 'Appointment',
+            children: <PatientsAppointments refresh={refresh}/>,
+        },
+        {
+            key: '2',
+            label: 'Prescription',
+            children: <PatientsPrescription refresh={refresh}/>
+
+        },
+        {
+            key: '3',
+            label: 'Billing',
+            children: <PatientsInvoice refresh={refresh}/>
+        },
+    ];*/
     return (
-        <Tabs defaultActiveKey="1" items={items} onChange={handleOnselect}/>
+            <Tabs defaultActiveKey="1" items={items} onChange={handleOnselect} />   
     )
 }
 export default PatientDashboard;
