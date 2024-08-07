@@ -63,6 +63,7 @@ const deleteTimeSlot = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const getAppointmentTimeOfEachDoctor = catchAsync(async (req: Request, res: Response) => {
+    console.log("getAppointmentTimeOfEachDoctor",req.params.id,req.query);
     const result = await TimeSlotService.getAppointmentTimeOfEachDoctor(req.params.id, req.query);
     sendResponse<DoctorTimeSlot>(res, {
         statusCode: 200,

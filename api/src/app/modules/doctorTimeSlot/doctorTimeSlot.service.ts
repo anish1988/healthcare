@@ -177,6 +177,7 @@ const updateTimeSlot = async (user: any, id: string, payload: any): Promise<{ me
 }
 
 const getAppointmentTimeOfEachDoctor = async (id: string, filter: any): Promise<any> => {
+    console.log("Doctor Id", id,filter);
     const doctorTimSlot = await prisma.doctorTimeSlot.findMany({
         where: {
             doctorId: id
