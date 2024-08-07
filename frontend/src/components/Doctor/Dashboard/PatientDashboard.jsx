@@ -15,19 +15,27 @@ import { userData } from '../../../constant/storageKey';
 
 
 const PatientDashboard = () => {
-    const { data, isLoading: pIsLoading } = useGetPatientAppointmentsQuery();
-    const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery();
-    const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery();
     const [sortBy, setSortBy] = useState("Appointment");
     const authToken = getFromLocalStorage(userData);
     const parseUserDatas = JSON.parse(authToken);
     console.log("parseUserDatas User Id ",parseUserDatas?.Last_Login_Id,sortBy);
+    const paramData = {LastLoginId: parseUserDatas?.Last_Login_Id}
+    const { data ,isLoading: pIsLoading } = useGetPatientAppointmentsQuery(paramData);
+    const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery(paramData);
+    const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery(paramData);
+    if(sortBy == 'Appointment'){
+        const { data ,isLoading: pIsLoading } = useGetPatientAppointmentsQuery(paramData);
+    }else   if(sortBy == 'Prescription'){
+        const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery(paramData);
+    }else {
+        const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery(paramData);
+
+    }
     const handleOnselect = (value) => {
         // eslint-disable-next-line eqeqeq
         setSortBy(value == 1 ? 'Appointment' : value == 2 ? 'Prescription' : value == 3 ? 'Billing' : sortBy)
-        //refetch()
+        
     }
-
     const InvoiceColumns = [
         {
             title: 'Doctor',
