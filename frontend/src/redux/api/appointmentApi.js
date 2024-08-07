@@ -59,10 +59,23 @@ export const appointmentApi = baseApi.injectEndpoints({
             invalidatesTags: [tagTypes.appointments]
         }),
         getPatientAppointments: build.query({
-            query: () => ({
+           /* query: (param) => ({
                 url: `${APPOINTMENT_URL}/patient/appointments`,
-                method: 'GET'
-            }),
+                method: 'POST',
+                params: param
+            }),*/
+            query: (param) => {
+                console.log("Query:", {
+                    url: `${APPOINTMENT_URL}/patient/appointments`,
+                    method: 'POST',
+                    params: param
+                });
+                return {
+                    url: `${APPOINTMENT_URL}/patient/appointments`,
+                    method: 'POST',
+                    params: param
+                };
+            },       
             providesTags: [tagTypes.appointments]
         }),
         getSingleAppointment: build.query({

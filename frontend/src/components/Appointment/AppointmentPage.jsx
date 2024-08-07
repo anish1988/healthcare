@@ -76,6 +76,10 @@ const AppointmentPage = () => {
       expiredMonth: selectValue.expiredMonth,
       nameOnCard: selectValue.nameOnCard
     }
+    obj.doctorInfo = {
+      doctorId: data.id,
+    }
+    console.log("createAppointmentByUnauthenticateUser",obj);
     createAppointmentByUnauthenticateUser(obj)
   }
 
@@ -107,7 +111,7 @@ const AppointmentPage = () => {
       title: 'Patient Information',
       content: <PersonalInformation handleChange={handleChange} selectValue={selectValue} setPatientId={setPatientId}/>
     },
-    {
+   {
       title: 'Payment',
       content: <CheckoutPage
         handleChange={handleChange}

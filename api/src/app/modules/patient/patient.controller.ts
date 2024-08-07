@@ -5,6 +5,7 @@ import { PatientService } from "./patient.service";
 import { Patient } from "@prisma/client";
 
 const createPatient = catchAsync(async (req: Request, res: Response) => {
+    console.log("createPatients",req.body);
     await PatientService.createPatient(req.body);
     sendResponse(res, {
         statusCode: 200,
@@ -44,6 +45,7 @@ const deletePatient = catchAsync(async (req: Request, res: Response) => {
 })
 
 const updatePatient = catchAsync(async (req: Request, res: Response) => {
+    console.log("updatePatient",req.body);
     const result = await PatientService.updatePatient(req);
     sendResponse<Patient>(res, {
         statusCode: 200,

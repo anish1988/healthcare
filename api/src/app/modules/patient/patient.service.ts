@@ -7,6 +7,7 @@ import { CloudinaryHelper } from "../../../helpers/uploadHelper";
 import ApiError from "../../../errors/apiError";
 import httpStatus from "http-status";
 const createPatient = async (payload: any): Promise<any> => {
+    console.log("CreatePatiensts",payload);
     const result = await create(payload)
     return result;
 }
@@ -43,9 +44,12 @@ const deletePatient = async (id: string): Promise<any> => {
 
 // : Promise<Patient>
 const updatePatient = async (req: Request): Promise<Patient | null> => {
+    //console.log("Anish",req);
     const file = req.file as IUpload;
     const id = req.params.id as string;
-    const user = JSON.parse(req.body.data)
+    const user = JSON.parse(req.body.data);
+    console.log("Usesatat",user);
+    console.log("id",id);
     if (file) {
         const uploadImage = await CloudinaryHelper.uploadFile(file);
         if (uploadImage) {
@@ -54,11 +58,25 @@ const updatePatient = async (req: Request): Promise<Patient | null> => {
             throw new ApiError(httpStatus.EXPECTATION_FAILED, 'Failed to updateImage !!')
         }
     }
-    const result = await prisma.patient.update({
-        where: { id },
-        data: user
-    })
-    return result;
+    try {
+        if (!id) {
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Missing required parameter: id');
+        }
+        if (!user) {
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Missing required parameter: user');
+        }
+console.log("you are here",user);
+        const updatedPatient = await prisma.patient.update({
+            where: { id },
+            data: user
+        });
+
+        console.log("result", updatedPatient);
+        return updatedPatient;
+    } catch (error) {
+        console.error('Failed to update patient:', error);
+        throw error;
+    }
 }
 
 const getPatientCount = async (): Promise<any> => {

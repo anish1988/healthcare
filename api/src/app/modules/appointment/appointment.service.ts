@@ -6,6 +6,11 @@ import moment from 'moment';
 import { EmailtTransporter } from "../../../helpers/emailTransporter";
 import * as path from 'path';
 import config from "../../../config";
+import { compareSync } from "bcrypt";
+
+const PatientService = require('../patient/patient.service').PatientService;
+
+// /const patiemtsController = require('../patient/patient.controller');
 
 const createAppointment = async (payload: any): Promise<Appointments | null | any> => {
 
@@ -16,8 +21,17 @@ const createAppointment = async (payload: any): Promise<Appointments | null | an
                 id: patientInfo.patientId
             }
         })
+        console.log("Is User Exist",isUserExist);
         if (!isUserExist) {
-            patientInfo['patientId'] = null
+            /**
+             * Creates a patient using the patient controller.
+             * @param {Omit<Patient, 'id'>} patientInfo - The patient information.
+             * @returns {Promise<Patient | null>} - A promise that resolves to the created patient or null if an error occurred.
+             */
+          //  const result = await patiemtsController.createPatient(patientInfo);
+            const result = await PatientService.createPatient(patientInfo);
+            console.log("result", result);
+            patientInfo['patientId'] = null;
         }
     }
 
@@ -106,13 +120,15 @@ const createAppointment = async (payload: any): Promise<Appointments | null | an
 }
 
 const createAppointmentByUnAuthenticateUser = async (payload: any): Promise<Appointments | null> => {
-    const { patientInfo, payment } = payload;
+    const { patientInfo, payment ,doctorInfo} = payload;
+    //console.log("patientInfo",patientInfo);
     if(patientInfo.patientId){
         const isUserExist = await prisma.patient.findUnique({
             where: {
                 id: patientInfo.patientId
             }
         })
+       // console.log("isUserExist",isUserExist);
         if (!isUserExist) {
             patientInfo['patientId'] = null
         }
@@ -132,7 +148,7 @@ const createAppointmentByUnAuthenticateUser = async (payload: any): Promise<Appo
         const day = (moment().dayOfYear()).toString().padStart(2, '0');
         const trackingId = 'UNU' + year + month + day + lastDigit || '0001';
         patientInfo['trackingId'] = trackingId;
-        patientInfo['doctorId'] = config.defaultAdminDoctor
+        patientInfo['doctorId'] = doctorInfo.doctorId;
 
         const appointment = await tx.appointments.create({
             data: patientInfo,
@@ -385,6 +401,7 @@ const getDoctorAppointmentsById = async (user: any, filter: any): Promise<Appoin
             lte: previoudsDate
         }
     }
+    console.log("andCondition",andCondition);
     const whereConditions = andCondition ? andCondition : {}
 
     const result = await prisma.appointments.findMany({
@@ -461,6 +478,71 @@ const getAppointmentCounts = async (): Promise<any> => {
     return result;
 }
 
+/**
+ * Check if a patient with the given email or mobile exists in the database.
+ * @param patientInfo - An object containing the email or mobile of the patient to check.
+ * @returns A Promise that resolves to true if the patient exists, false otherwise.
+ */
+const checkPatientsExits = async (patientInfo: any): Promise<boolean> => {
+    // Check if patientInfo object and email or mobile property are present
+    console.log("checkPatientsExits",patientInfo);
+    if (patientInfo && (patientInfo.email || patientInfo.phone)) {
+        // Search for patient with the given email or mobile in the database
+        const isUserExist = await prisma.patient.findUnique({
+            where: {
+                email: patientInfo.email
+            }
+        });
+
+        // Log the result and return true if patient exists, false otherwise
+        console.log("isUserExist", isUserExist);
+        return Boolean(isUserExist);
+    }
+    
+    // Return false if patientInfo object or email or mobile property is missing
+    return false;
+}
+
+
+/**
+ * Creates a new patient in the database.
+ * @param payload - The details of the patient to be created.
+ * @returns A promise that resolves to the created patient object.
+ * @throws Throws an error if the payload is falsy.
+ */
+const createPatients = async (payload: Prisma.PatientCreateInput): Promise<Patient> => {
+    console.log("createPatient",payload);
+    if (!payload) {
+        throw new Error('Payload is required');
+    }
+
+    try {
+        const result: Patient = await prisma.patient.create({
+            data: payload
+        });
+        console.log("result", result);
+        return result;
+    } catch (error) {
+        console.error('Failed to create patient:', error);
+        throw error;
+    }
+}
+
+/**
+ * Retrieves a patient by their email address.
+ * @param email - The email address of the patient.
+ * @returns A promise that resolves to the patient object, or undefined if not found.
+ */
+const getPatientsId = async (email: string): Promise<Patient | undefined> => {
+    const result: Prisma.Patient | null = await prisma.patient.findFirst({
+        where: {
+            email: email
+        }
+    });
+    console.log("getPatientsId",result);
+    return result;
+}
+
 export const AppointmentService = {
     createAppointment,
     getAllAppointments,
@@ -476,5 +558,8 @@ export const AppointmentService = {
     getPatientPaymentInfo,
     getDoctorInvoices,
     createAppointmentByUnAuthenticateUser,
-    getAppointmentByTrackingId
+    getAppointmentByTrackingId,
+    checkPatientsExits,
+    createPatients,
+    getPatientsId
 }
