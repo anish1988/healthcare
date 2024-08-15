@@ -6,13 +6,38 @@ import { Appointments, Patient } from "@prisma/client";
 import { channel } from "diagnostics_channel";
 
 const createAppointment = catchAsync(async (req: Request, res: Response) => {
+    const PatientsInfo = req.body.patientInfo;
+    if(PatientsInfo.patientId == 'undefined'){
+        const result = await AppointmentService.checkPatientsExits(PatientsInfo);
+        if (!result) {
+            const createPatientsInfo:any = {};
+            createPatientsInfo.firstName = PatientsInfo.firstName;  
+            createPatientsInfo.lastName = PatientsInfo.lastName; 
+            createPatientsInfo.email = PatientsInfo.email;  
+            //createPatientsInfo.firstName = PatientsInfo.firstName;   
+            /**
+             * Creates a new patient in the database.
+             * 
+             * @param {Prisma.PatientCreateInput} PatientsInfo - The details of the patient to be created.
+             * @returns {Promise<Patient>} - A promise that resolves to the created patient object.
+             */
+            const patResult = await AppointmentService.createPatients(createPatientsInfo as Prisma.PatientCreateInput) as Patient;
+            PatientsInfo.patientId = patResult.id;
+           
+        } else{
+            PatientsInfo.patientId = result.id;
+        }
+        
+     }
     const result = await AppointmentService.createAppointment(req.body);
-    sendResponse(res, {
-        statusCode: 200,
-        message: 'Successfully Appointment Created !!',
-        success: true,
-        data: result
-    })
+        sendResponse(res, {
+            statusCode: 200,
+            message: 'Successfully Appointment Created !!',
+            success: true,
+            data: result
+        })
+   
+    
 })
 const createAppointmentByUnAuthenticateUser = catchAsync(async (req: Request, res: Response) => {
     console.log("createAppointmentByUnAuthenticateUser",req.body.patientInfo);
@@ -37,7 +62,6 @@ const createAppointmentByUnAuthenticateUser = catchAsync(async (req: Request, re
         const patResult = await AppointmentService.createPatients(createPatientsInfo as Prisma.PatientCreateInput) as Patient;
         console.log("patienrsId", patResult.id);
         req.body.patientInfo.patientId = patResult.id;
-        console.log("Final reqBody",req.body);
         const result = await AppointmentService.createAppointmentByUnAuthenticateUser(req.body);
         sendResponse(res, {
             statusCode: 200,
@@ -49,7 +73,6 @@ const createAppointmentByUnAuthenticateUser = catchAsync(async (req: Request, re
     }else {
         const getPatientsId = await AppointmentService.getPatientsId(PatientsInfo.email);
         req.body.patientInfo.patientId = getPatientsId.id;
-        console.log("Final reqBody",req.body);
         const result = await AppointmentService.createAppointmentByUnAuthenticateUser(req.body);
         sendResponse(res, {
             statusCode: 200,
@@ -238,7 +261,6 @@ const checkPatientsExits = async (patientInfo: any): Promise<string | undefined>
          * @returns {Promise<Patient>} - A promise that resolves to the created patient object.
          */
         const patResult = await AppointmentService.createPatients(patientInfo as Prisma.PatientCreateInput) as Patient;
-        console.log("patienrsId", patResult.id);
         return patResult.id;
     }
     return undefined; 
