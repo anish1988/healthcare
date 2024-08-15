@@ -82,7 +82,7 @@ const PersonalInformation = ({ handleChange, pData , selectValue, setPatientId =
                 <div className="col-md-6 col-sm-12">
                     <div className="form-group card-label mb-3">
                         <label>Email</label>
-                        <input onChange={(e) => handleChange(e)} name='pEmail' value={email || email} className="form-control" type="email" disabled/>
+                        <input onChange={(e) => handleChange(e)} name='pEmail' value={email || email} className="form-control" type="email" />
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-12">
