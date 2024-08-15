@@ -1,15 +1,49 @@
 import { Checkbox, message } from 'antd';
 import { useEffect, useState } from 'react';
 import useAuthCheck from '../../redux/hooks/useAuthCheck';
+import { getFromLocalStorage } from '../../utils/local-storage';
+import { userData } from '../../constant/storageKey';   
 
-const PersonalInformation = ({ handleChange, selectValue, setPatientId =() =>{} }) => {
-    const { firstName, lastName, email, phone, reasonForVisit, description, address } = selectValue;
+const PersonalInformation = ({ handleChange, pData , selectValue, setPatientId =() =>{} }) => {
+    const { firstName, lastName, email, mobile, reasonForVisit, description, address } = selectValue;
+    
+    console.log("selctedValue",selectValue);
+    console.log("selctedValue data",pData);
     const [checked, setChecked] = useState(false);
     const { data } = useAuthCheck();
+    const authToken = getFromLocalStorage(userData);
+    const parseUserDatas = JSON.parse(authToken);       
 
     const onChange = (e) => {
         setChecked(e.target.checked);
     };
+ /*   const [selectValue, setSelectValue] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        mobile: '',
+        reasonForVisit: '',
+        description: '',
+        address: ''
+    });
+
+    
+    useEffect(() => {
+        if (pData) {
+            console.log("Updating selectValue with pData");
+            // Assuming `setSelectValue` updates the selectValue state correctly
+            setSelectValue({
+                firstName: pData.firstName || '',
+                lastName: pData.lastName || '',
+                email: pData.email || '',
+                mobile: pData.mobile || '',
+                reasonForVisit: pData.reasonForVisit || '',
+                description: pData.description || '',
+                address: pData.address || ''
+            });
+        }
+    }, [pData]);
+    */
 
     useEffect(() =>{
         if(checked){
@@ -19,6 +53,10 @@ const PersonalInformation = ({ handleChange, selectValue, setPatientId =() =>{} 
             }else{
                 message.error("User is not Found, Please Login!")
             }
+        }else if(parseUserDatas?.length > 0){
+            setPatientId(parseUserDatas?.Last_Login_Id);
+        }else {
+            setPatientId('undefined');
         }
     }, [checked, data, setPatientId])
 
@@ -44,13 +82,13 @@ const PersonalInformation = ({ handleChange, selectValue, setPatientId =() =>{} 
                 <div className="col-md-6 col-sm-12">
                     <div className="form-group card-label mb-3">
                         <label>Email</label>
-                        <input onChange={(e) => handleChange(e)} name='email' value={email && email} className="form-control" type="email" />
+                        <input onChange={(e) => handleChange(e)} name='pEmail' value={email || email} className="form-control" type="email" disabled/>
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-12">
                     <div className="form-group card-label mb-3">
                         <label>Phone</label>
-                        <input onChange={(e) => handleChange(e)} name='phone' value={phone && phone} className="form-control" type="text" />
+                        <input onChange={(e) => handleChange(e)} name='mobile' value={mobile  || mobile} className="form-control" type="text" />
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-12">

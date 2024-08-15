@@ -12,7 +12,7 @@ const SearchContent = ({ data }) => {
     return (
         <div className="mb-4 rounded" style={{ background: '#f3f3f3' }}>
             <div className='d-flex p-3 justify-content-between'>
-                <div className='d-flex gap-3'>
+            <div className='d-flex gap-3'>
                     <div className='doc-img-fluid d-flex align-items-center'>
                         { data?.img && <img src={data?.img} className="" alt="User Image" />}
                     </div>
@@ -65,7 +65,7 @@ const SearchContent = ({ data }) => {
                         <ul>
                             <li><FaRegThumbsUp />  97%</li>
                             <li><FaComment /> 4 Feedback</li>
-                            <li><FaLocationArrow />{truncate(data?.clinicAddress, 20)}</li>
+                            <li><FaLocationArrow />clinicAddress, 20</li>
                             <li><FaDollarSign /> {data?.price ? truncate(data?.price, 4) : 60} (Per Hour)</li>
                         </ul>
                     </div>

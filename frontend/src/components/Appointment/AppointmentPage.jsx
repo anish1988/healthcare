@@ -51,10 +51,13 @@ const AppointmentPage = () => {
   useEffect(() => {
     const { firstName, lastName, email, phone, nameOnCard, cardNumber, expiredMonth, cardExpiredYear, cvv, reasonForVisit } = selectValue;
     const isInputEmpty = !firstName || !lastName || !email || !phone || !reasonForVisit;
-    const isConfirmInputEmpty = !nameOnCard || !cardNumber || !expiredMonth || !cardExpiredYear || !cvv || !isCheck;
+    //const isConfirmInputEmpty = !nameOnCard || !cardNumber || !expiredMonth || !cardExpiredYear || !cvv || !isCheck;
+    const isConfirmInputEmpty =  !isCheck;
     setIsDisable(isInputEmpty);
     setIsConfirmDisable(isConfirmInputEmpty);
   }, [selectValue, isCheck]);
+
+  console.log("Big Data print ", data,role);
   
   const handleConfirmSchedule = () => {
     const obj = {};
@@ -118,7 +121,7 @@ const AppointmentPage = () => {
         selectValue={selectValue}
         isCheck={isCheck}
         setIsChecked={setIsChecked}
-        data={false}
+        data={data}
         selectedDate={selectedDate}
         selectTime={selectTime}
       />,

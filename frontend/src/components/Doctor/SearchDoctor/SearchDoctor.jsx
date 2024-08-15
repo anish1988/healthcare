@@ -58,8 +58,8 @@ const SearchDoctor = () => {
     let content = null;
     if (isLoading) content = <>Loading ...</>;
     if (!isLoading && isError) content = <div>Something Went Wrong !</div>
-    if (!isLoading && !isError && doctorsData.length === 0) content = <div><Empty /></div>
-    if (!isLoading && !isError && doctorsData.length > 0) content =
+    if (!isLoading && !isError && (!doctorsData || doctorsData?.length === 0)) content = <div><Empty /></div>
+    if (!isLoading && !isError && doctorsData?.length > 0) content =
         <>
             {
                 doctorsData && doctorsData?.map((item, id) => (

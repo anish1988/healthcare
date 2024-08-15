@@ -42,6 +42,8 @@ const DoctorBooking = () => {
     const [selectTime, setSelectTime] = useState('');
     const [isCheck, setIsChecked] = useState(false);
     const [patientId, setPatientId] = useState('');
+    
+    const [open, setOpen] = useState(true);
     const [createAppointment, { data: appointmentData, isSuccess: createIsSuccess, isError: createIsError, error: createError, isLoading: createIsLoading }] = useCreateAppointmentMutation();
     const { doctorId } = useParams();
     const navigation = useNavigate();
@@ -55,19 +57,29 @@ const DoctorBooking = () => {
     const handleChange = (e) => { setSelectValue({ ...selectValue, [e.target.name]: e.target.value }) }
 
     useEffect(() => {
-        const { firstName, lastName, email, phone, nameOnCard, cardNumber, expiredMonth, cardExpiredYear, cvv, reasonForVisit } = selectValue;
-        const isInputEmpty = !firstName || !lastName || !email || !phone || !reasonForVisit;
-        const isConfirmInputEmpty = !nameOnCard || !cardNumber || !expiredMonth || !cardExpiredYear || !cvv || !isCheck;
-        setIsDisable(isInputEmpty);
+        const { firstName, lastName, email, mobile, nameOnCard, cardNumber, expiredMonth, cardExpiredYear, cvv, reasonForVisit } = selectValue;
+        const isInputEmpty = !firstName || !lastName  || !reasonForVisit;
+       // const isConfirmInputEmpty = !nameOnCard || !cardNumber || !expiredMonth || !cardExpiredYear || !cvv || !isCheck;
+        const isConfirmInputEmpty  = !isCheck;
+        
+       setIsDisable(isInputEmpty);
         setIsConfirmDisable(isConfirmInputEmpty);
     }, [selectValue, isCheck])
 
-
+    
     const handleDateChange = (_date, dateString) => {
         setSelectedDate(dateString)
         setSelecDay(moment(dateString).format('dddd').toLowerCase());
+        setOpen(false);
+        setTimeout(() => {
+            document.activeElement.blur();
+          }, 0);
         refetch();
     }
+    const handleOpenChange = (status) => {
+       console.log("Oncliekc call");
+        setOpen(status);
+      };
     const disabledDateTime = (current) => current && (current < moment().add(1, 'day').startOf('day') || current > moment().add(8, 'days').startOf("day"))
     const handleSelectTime = (date) => { setSelectTime(date) }
 
@@ -116,11 +128,14 @@ const DoctorBooking = () => {
                 selectedDate={selectedDate}
                 dContent={dContent}
                 selectTime={selectTime}
+                open={open}
+                onOpenChange={handleOpenChange}
+                
             />
         },
         {
             title: 'Patient Information',
-            content: <PersonalInformation handleChange={handleChange} selectValue={selectValue} setPatientId={setPatientId}/>
+            content: <PersonalInformation handleChange={handleChange} pData={loggedInUser} selectValue={selectValue} setPatientId={setPatientId}/>
         },
         {
             title: 'Payment',
