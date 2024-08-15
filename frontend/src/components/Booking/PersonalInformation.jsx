@@ -5,7 +5,7 @@ import { getFromLocalStorage } from '../../utils/local-storage';
 import { userData } from '../../constant/storageKey';   
 
 const PersonalInformation = ({ handleChange, pData , selectValue, setPatientId =() =>{} }) => {
-    const { firstName, lastName, email, mobile, reasonForVisit, description, address } = selectValue;
+    const { firstName, lastName, email, phone, reasonForVisit, description, address } = selectValue;
     
     console.log("selctedValue",selectValue);
     console.log("selctedValue data",pData);
@@ -88,7 +88,7 @@ const PersonalInformation = ({ handleChange, pData , selectValue, setPatientId =
                 <div className="col-md-6 col-sm-12">
                     <div className="form-group card-label mb-3">
                         <label>Phone</label>
-                        <input onChange={(e) => handleChange(e)} name='mobile' value={mobile  || mobile} className="form-control" type="text" />
+                        <input onChange={(e) => handleChange(e)} name='phone' value={phone  || phone} className="form-control" type="text" />
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-12">

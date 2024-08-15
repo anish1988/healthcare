@@ -57,7 +57,7 @@ const DoctorBooking = () => {
     const handleChange = (e) => { setSelectValue({ ...selectValue, [e.target.name]: e.target.value }) }
 
     useEffect(() => {
-        const { firstName, lastName, email, mobile, nameOnCard, cardNumber, expiredMonth, cardExpiredYear, cvv, reasonForVisit } = selectValue;
+        const { firstName, lastName, email, phone, nameOnCard, cardNumber, expiredMonth, cardExpiredYear, cvv, reasonForVisit } = selectValue;
         const isInputEmpty = !firstName || !lastName  || !reasonForVisit;
        // const isConfirmInputEmpty = !nameOnCard || !cardNumber || !expiredMonth || !cardExpiredYear || !cvv || !isCheck;
         const isConfirmInputEmpty  = !isCheck;
